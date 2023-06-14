@@ -5,6 +5,8 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
 const { PORT = 300 } = process.env;
+// eslint-disable-next-line no-console
+console.log('слушаю порт 300');
 const app = express();
 
 app.use(express.json());
@@ -20,6 +22,6 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
+  // eslint-disable-next-line no-console
   console.log(`Слушаю порт ${PORT}`);
 });
