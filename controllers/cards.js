@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 
 const getCard = (req, res) => Card.find({})
-  .populate(['owner', 'likes'])
+  // .populate(['owner', 'likes'])
   .then((card) => res.send({ data: card }))
   .catch((error) => res.status(500).send(`Ошибка сервера: ${error}`));
 
