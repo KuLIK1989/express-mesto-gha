@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const rateLimit = require('express-rate-limit');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUsers, login } = require('./controllers/users');
@@ -14,7 +16,13 @@ const { PORT = 3000 } = process.env;
 const { ERROR_SERVER } = require('./utils/errors/constants');
 // eslint-disable-next-line no-console
 const app = express();
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 app.use(express.json());
 app.use(bodyParser.json());
 
@@ -25,7 +33,7 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/),
-      email: Joi.string().min().email()
+      email: Joi.string().email()
         .required(),
       password: Joi.string()
         .required(),
