@@ -2,7 +2,7 @@ const ERROR_CODE = 400;
 const ERROR_NOT_FOUND = 404;
 const ERROR_SERVER = 500;
 const SUCCESS = 200;
-const BASE_ERROR = 1100;
+const BASE_ERROR = 11000;
 const CONFLICT_REQUEST = 409;
 
 module.exports = {
