@@ -76,7 +76,6 @@ app.use((err, req, res, next) => {
   res
     .status(statusCode)
     .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === ERROR_SERVER
         ? 'На сервере произошла ошибка'
         : message,
