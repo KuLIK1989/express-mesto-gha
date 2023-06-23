@@ -9,11 +9,13 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUsers, login } = require('./controllers/users');
 const auth = require('./midlewares/auth');
-const NotFoundError = require('./utils/errors/NotFoundError');
+// const NotFoundError = require('./utils/errors/NotFoundError');
 // eslint-disable-next-line no-unused-vars
 
 const { PORT = 3000 } = process.env;
 const { ERROR_SERVER } = require('./utils/errors/constants');
+// const NotUsersFound = require('./utils/errors/NotUsersFound');
+const NotFoundError = require('./utils/errors/NotFoundError');
 // eslint-disable-next-line no-console
 const app = express();
 const limiter = rateLimit({
@@ -46,7 +48,7 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().min(4).email()
+      email: Joi.string().email()
         .required(),
       password: Joi.string()
         .required(),
