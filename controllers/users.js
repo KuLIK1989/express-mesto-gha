@@ -4,8 +4,10 @@ const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const User = require('../models/user');
 const ErrorCode = require('../utils/errors/ErrorCode');
-const ConflictRequest = require('../utils/errors/ConflictRequest');
+// const ConflictRequest = require('../utils/errors/ConflictRequest');
 const NotFoundError = require('../utils/errors/NotFoundError');
+const NotUsersFound = require('../utils/errors/NotUsersFound');
+const ConflictRequest = require('../utils/errors/ConflictRequest');
 const {
   ERROR_CODE, ERROR_NO_USER, SUCCESS, BASE_ERROR,
 } = require('../utils/errors/constants');
@@ -13,7 +15,7 @@ const {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
-    .orFail(() => next(new NotFoundError('Пользователь не найден')))
+    .orFail(() => next(new NotUsersFound('Пользователь не найден')))
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
       if (matched) {
         return user;

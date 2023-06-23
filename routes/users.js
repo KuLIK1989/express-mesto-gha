@@ -29,7 +29,6 @@ router.patch('/me', celebrate({
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().min(4).pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/).required(),
-    // https://habr.com/ru/post/66931/
   }),
 }), changeAvatar);
 
