@@ -7,10 +7,11 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUsers, login } = require('./controllers/users');
 const auth = require('./midlewares/auth');
+const NotFoundError = require('./utils/errors/NotFoundError');
 // eslint-disable-next-line no-unused-vars
 
 const { PORT = 3000 } = process.env;
-const { ERROR_NOT_FOUND, ERROR_SERVER } = require('./utils/errors/constants');
+const { ERROR_SERVER } = require('./utils/errors/constants');
 // eslint-disable-next-line no-console
 const app = express();
 
@@ -24,7 +25,7 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/),
-      email: Joi.string().min(4).email()
+      email: Joi.string().min().email()
         .required(),
       password: Joi.string()
         .required(),
@@ -52,8 +53,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
 
-app.use('*', (req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
+app.use('*', auth, (req, res, next) => {
+  next(new NotFoundError('Запрашиваемая страница не найдена'));
 });
 
 app.use(errors());
