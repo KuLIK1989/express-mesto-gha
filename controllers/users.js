@@ -3,14 +3,13 @@ const bcrypt = require('bcrypt');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jsonwebtoken = require('jsonwebtoken');
 const User = require('../models/user');
-const ErrorCode = require('../utils/errors/ErrorCode');
+// const ErrorCode = require('../utils/errors/ErrorCode');
 // const ConflictRequest = require('../utils/errors/ConflictRequest');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const NotUsersFound = require('../utils/errors/NotUsersFound');
 const ConflictRequest = require('../utils/errors/ConflictRequest');
-const {
-  ERROR_CODE, ERROR_NO_USER, SUCCESS, BASE_ERROR,
-} = require('../utils/errors/constants');
+const BadRequestError = require('../utils/errors/BadRequestError');
+const { ERROR_NO_USER, SUCCESS, BASE_ERROR } = require('../utils/errors/constants');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -20,7 +19,7 @@ const login = (req, res, next) => {
       if (matched) {
         return user;
       }
-      return next(new NotFoundError('Пользователь не найден'));
+      return next(new NotFoundError('Неправильная почта или пароль'));
     }))
     .then((user) => {
       const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
@@ -48,7 +47,7 @@ const getUsersId = (req, res, next) => User.findById(req.params.userId)
   })
   .catch((error) => {
     if (error.name === 'CastError') {
-      res.status(ERROR_CODE).send({ message: 'Некорректный _id пользователя' });
+      next(new BadRequestError('Некорректный _id пользователя'));
     } else {
       next(error);
     }
@@ -72,7 +71,7 @@ const createUsers = (req, res, next) => {
     // .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new ErrorCode('Переданы некорректные данные при создании пользователя'));
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else if (error.code === BASE_ERROR) {
         next(new ConflictRequest('Пользователь с указанной почтой уже есть в системе'));
         // res.status(ERROR_SERVER).send('Ошибка сервера');
@@ -95,7 +94,7 @@ const changeUserInfo = (req, res, next) => {
     .then((userInfo) => res.send({ data: userInfo }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new ErrorCode('Переданы некорректные данные при обновлении профиля'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else {
         next(error);
       }
@@ -115,7 +114,7 @@ const changeAvatar = (req, res, next) => {
     .then((userAvatar) => res.send({ data: userAvatar }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new ErrorCode('Переданы некорректные данные при обновлении аватара'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
       } else {
         next(error);
       }
