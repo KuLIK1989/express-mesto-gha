@@ -9,7 +9,7 @@ const NotFoundError = require('../utils/errors/NotFoundError');
 const NotUsersFound = require('../utils/errors/NotUsersFound');
 const ConflictRequest = require('../utils/errors/ConflictRequest');
 const BadRequestError = require('../utils/errors/BadRequestError');
-const { SUCCESS, BASE_ERROR } = require('../utils/errors/constants');
+const { SUCCESS, BASE_ERROR, CREATED } = require('../utils/errors/constants');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -62,7 +62,7 @@ const createUsers = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(SUCCESS).send({
+    .then((user) => res.status(CREATED).send({
       email: user.email,
       name: user.name,
       about: user.about,

@@ -4,7 +4,7 @@ const ErrorCode = require('../utils/errors/ErrorCode');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const Forbidden = require('../utils/errors/Forbidden');
 const BadRequestError = require('../utils/errors/BadRequestError');
-const { SUCCESS } = require('../utils/errors/constants');
+const { CREATED } = require('../utils/errors/constants');
 
 const getCard = (req, res, next) => Card.find({})
 // .populate(['owner', 'likes'])
@@ -14,7 +14,7 @@ const getCard = (req, res, next) => Card.find({})
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   return Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(SUCCESS).send({ data: card }))
+    .then((card) => res.status(CREATED).send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки'));
