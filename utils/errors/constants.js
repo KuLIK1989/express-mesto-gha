@@ -1,7 +1,7 @@
 const ERROR_CODE = 400;
 const ERROR_NOT_FOUND = 404;
 const ERROR_SERVER = 500;
-const SUCCESS = 201;
+const SUCCESS = 200;
 const BASE_ERROR = 11000;
 const CONFLICT_REQUEST = 409;
 
