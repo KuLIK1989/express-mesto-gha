@@ -14,12 +14,12 @@ const { SUCCESS, BASE_ERROR } = require('../utils/errors/constants');
 const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
-    .orFail(() => next(new NotUsersFound('Пользователь не найден')))
+    .orFail(() => new NotUsersFound('Пользователь не найден'))
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
       if (matched) {
         return user;
       }
-      return next(new NotFoundError('Неправильная почта или пароль'));
+      throw new NotFoundError('Неправильная почта или пароль');
     }))
     .then((user) => {
       const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
